@@ -1,0 +1,115 @@
+pmDoctrineGeneratorPlugin
+=======================
+
+The `pmDoctrineGeneratorPlugin` decouples the admin generator and the forms
+framework by delegating the module behavior to the form. Also, adds to the
+admin module the show action.
+
+Installation
+------------
+
+  * Install the plugin
+
+        [bash]
+        $ ./symfony plugin:install pmDoctrineGeneratorPlugin
+
+  * Clear the cache
+
+        [bash]
+        $ ./symfony cc
+
+Configuration
+-------------
+
+  * Set the pmDoctrineGenerator class on generator.yml
+
+        [yml]
+        generator:
+          class: pmDoctrineGenerator
+          # ...
+
+  * And the basic theme
+
+        [yml]
+        generator:
+          # ...
+          param:
+            # ...
+            theme: basic
+            # ...
+
+  * Configure the module as you configure the standard admin generator except
+    that fields configuration and display are no longer available on new, edit,
+    and show contexts.
+
+Features
+--------
+
+  * fieldset support by adding the `getFieldsets` method in the form
+
+        [php]
+        class Person extends sfFormDoctrine
+        {
+          // ...
+
+          public function getFieldsets()
+          {
+            return array(
+              'NONE' => array('first_name', 'last_name'),
+              'Address' => array('street', 'number', 'city_id')
+            );
+          }
+
+  * layout support by adding the `getLayout` method in the form
+
+        [php]
+        class Person extends sfFormDoctrine
+        {
+          // ...
+
+          public function getLayout()
+          {
+            return 'tabbed'; // or 'folded'
+          }
+
+      Also you could create another layouts, creating a partial. I.E., tabbed
+      layout is coded in _form_tabbed.php and _show_form_tabbed.php.
+
+  * fields and display configuration through the form.
+  * the forms are displayed in tables rather than divs (as originally in forms)
+    and thus the partials are less than in the standard generator.
+  * form formatters are used if defined.
+  * object actions can be forbidden if a method is defined in the object. IE:
+
+          [php]
+          class Person extends BasePerson
+          {
+            /**
+             * this method will be used to forbid the edit action in the generator
+             */
+            public function canEdit()
+            {
+              return !$this->getLock();
+            }
+          }
+
+  * object actions can be shown on a condition. IE:
+
+          [yml]
+          list:
+            object_actions:
+              _edit:
+                show_when: canEdit
+              # ...
+
+Suggestions
+-----------
+
+Email me suggestions!
+
+TODO
+----
+
+  * Improve stylesheets (specially tabbed layout)
+  * Test
+  * Refactor
