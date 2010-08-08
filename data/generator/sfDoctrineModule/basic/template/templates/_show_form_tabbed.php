@@ -24,7 +24,13 @@
                           [?php echo $form[$name]->renderLabel() ?]
                         </th>
                         <td>
-                          [?php echo $form[$name]->getValue() ?]
+                          [?php $column = new sfDoctrineColumn($name, Doctrine::getTable('<?php echo $this->getSingularName() ?>')) ?]
+                          [?php if ($column->isForeignKey()): ?]
+                            [?php $method = 'get'.$column->getForeignClassName() ?]
+                            [?php echo $form->getObject()->$method() ?]
+                          [?php else: ?]
+                            [?php echo $form[$name]->getValue() ?]
+                          [?php endif ?]
                           [?php echo $form[$name]->renderHelp() ?]
                         </td>
                       </tr>
@@ -35,7 +41,14 @@
             [?php else: ?]
               [?php foreach ($field_names as $name): ?]
                 [?php if (!$form[$name]->isHidden()): ?]
-                  [?php echo $form->getWidgetSchema()->getFormFormatter()->formatRow($form[$name]->renderLabel(), $form[$name]->getValue(), array(), $form->getWidgetSchema()->getHelp($name), '') ?]
+                  [?php $column = new sfDoctrineColumn($name, Doctrine::getTable('<?php echo $this->getSingularName() ?>')) ?]
+                [?php if ($column->isForeignKey()): ?]
+                  [?php $method = 'get'.$column->getForeignClassName() ?]
+                  [?php $value = $form->getObject()->$method() ?]
+                [?php else: ?]
+                  [?php $value = $form[$name]->getValue() ?]
+                [?php endif ?]
+                [?php echo $form->getWidgetSchema()->getFormFormatter()->formatRow($form[$name]->renderLabel(), $value, array(), $form->getWidgetSchema()->getHelp($name), '') ?]
                 [?php endif ?]
               [?php endforeach ?]
             [?php endif ?]
@@ -53,7 +66,13 @@
                       [?php echo $form[$name]->renderLabel() ?]
                     </th>
                     <td>
-                      [?php echo $form[$name]->getValue() ?]
+                      [?php $column = new sfDoctrineColumn($name, Doctrine::getTable('<?php echo $this->getSingularName() ?>')) ?]
+                      [?php if ($column->isForeignKey()): ?]
+                        [?php $method = 'get'.$column->getForeignClassName() ?]
+                        [?php echo $form->getObject()->$method() ?]
+                      [?php else: ?]
+                        [?php echo $form[$name]->getValue() ?]
+                      [?php endif ?]
                       [?php echo $form[$name]->renderHelp() ?]
                     </td>
                   </tr>
@@ -65,7 +84,14 @@
           <fieldset id="sf_fieldset_none">
             [?php foreach ($form->getFormFieldSchema() as $name => $field): ?]
               [?php if (!$form[$name]->isHidden()): ?]
-                [?php echo $form->getWidgetSchema()->getFormFormatter()->formatRow($form[$name]->renderLabel(), $form[$name]->getValue(), array(), $form->getWidgetSchema()->getHelp($name), '') ?]
+                [?php $column = new sfDoctrineColumn($name, Doctrine::getTable('<?php echo $this->getSingularName() ?>')) ?]
+                [?php if ($column->isForeignKey()): ?]
+                  [?php $method = 'get'.$column->getForeignClassName() ?]
+                  [?php $value = $form->getObject()->$method() ?]
+                [?php else: ?]
+                  [?php $value = $form[$name]->getValue() ?]
+                [?php endif ?]
+                [?php echo $form->getWidgetSchema()->getFormFormatter()->formatRow($form[$name]->renderLabel(), $value, array(), $form->getWidgetSchema()->getHelp($name), '') ?]
               [?php endif ?]
             [?php endforeach ?]
           </fieldset>
